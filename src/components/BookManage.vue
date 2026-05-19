@@ -3,7 +3,6 @@
     <!-- Main Dialog -->
     <el-dialog
       :visible.sync="dialogVisible"
-      :title="showRecycle ? '回收站' : '书籍管理'"
       width="720px"
       top="6vh"
       :close-on-click-modal="false"
@@ -42,6 +41,7 @@
         :data="pagedBooks"
         size="small"
         stripe
+        v-loading="loading"
         style="width: 100%"
       >
         <el-table-column prop="name" label="书名" min-width="160" />
@@ -73,6 +73,7 @@
         :data="pagedRecycleBooks"
         size="small"
         stripe
+        v-loading="loading"
         style="width: 100%"
       >
         <el-table-column prop="name" label="书名" min-width="160" />
@@ -275,6 +276,8 @@ export default {
         .then((res) => {
           if (res.data.isSuccess) {
             this.books = res.data.data || [];
+          } else {
+            this.$message.error(res.data.errorMsg || "获取书籍列表失败");
           }
         })
         .catch(() => {
@@ -290,6 +293,8 @@ export default {
         .then((res) => {
           if (res.data.isSuccess) {
             this.recycleBooks = res.data.data || [];
+          } else {
+            this.$message.error(res.data.errorMsg || "获取回收站列表失败");
           }
         })
         .catch(() => {
