@@ -52,6 +52,18 @@
             </el-tag>
           </div>
         </div>
+        <div class="setting-wrapper">
+          <div class="setting-title">书籍管理</div>
+          <div class="setting-item">
+            <el-tag
+              type="info"
+              class="setting-manage"
+              @click="showBookManage = true"
+            >
+              书籍管理
+            </el-tag>
+          </div>
+        </div>
       </div>
       <div class="bottom-icons">
         <a
@@ -120,17 +132,21 @@
         </div>
       </div>
     </div>
+    <BookManage :visible.sync="showBookManage" />
   </div>
 </template>
 
 <script>
 import "../assets/fonts/shelffont.css";
 import ajax from "../plugins/ajax";
+import BookManage from "../components/BookManage";
 
 export default {
+  components: { BookManage },
   data() {
     return {
       search: "",
+      showBookManage: false,
       readingRecent: {
         name: "尚无阅读记录",
         author: "",
@@ -387,6 +403,12 @@ export default {
         font-size: 8px;
         margin-top: 16px;
         // color: #6B7C87;
+        cursor: pointer;
+      }
+
+      .setting-manage {
+        font-size: 8px;
+        margin-top: 12px;
         cursor: pointer;
       }
     }
