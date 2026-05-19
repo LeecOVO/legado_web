@@ -1,6 +1,7 @@
 import Vue from "vue";
 import {
   Button,
+  Dialog,
   Divider,
   MessageBox,
   Message,
@@ -13,6 +14,10 @@ import {
   Loading,
   Input,
   Tag,
+  Upload,
+  Pagination,
+  Form,
+  FormItem,
 } from "element-ui";
 
 Vue.use(Button);
@@ -26,6 +31,11 @@ Vue.use(Input);
 Vue.use(Tag);
 Vue.use(Tooltip);
 Vue.use(Loading.directive);
+Vue.use(Dialog);
+Vue.use(Upload);
+Vue.use(Pagination);
+Vue.use(Form);
+Vue.use(FormItem);
 
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$message = Message;
