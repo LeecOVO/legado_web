@@ -7,6 +7,7 @@
       top="6vh"
       :close-on-click-modal="false"
       @opened="onOpened"
+      @closed="onClosed"
     >
       <div slot="title" class="dialog-title">
         <span :class="showRecycle ? 'title-recycle' : 'title-manage'">
@@ -268,6 +269,9 @@ export default {
   methods: {
     onOpened() {
       this.fetchBooks();
+    },
+    onClosed() {
+      this.$emit("close");
     },
     fetchBooks() {
       this.loading = true;

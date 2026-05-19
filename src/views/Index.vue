@@ -132,7 +132,7 @@
         </div>
       </div>
     </div>
-    <BookManage :visible.sync="showBookManage" />
+    <BookManage :visible.sync="showBookManage" @close="fetchBookShelfData" />
   </div>
 </template>
 
