@@ -435,12 +435,15 @@ export default {
           if (res.data.isSuccess && res.data.data) {
             this.editForm.coverUrl = res.data.data;
             this.$message.success("封面上传成功");
+            option.onSuccess(res);
           } else {
             this.$message.error(res.data.errorMsg || "上传失败");
+            option.onError(new Error(res.data.errorMsg || "上传失败"));
           }
         })
-        .catch(() => {
+        .catch((err) => {
           this.$message.error("封面上传失败");
+          option.onError(err);
         });
     },
     submitUpload() {
@@ -485,6 +488,13 @@ export default {
   watch: {
     searchText() {
       this.currentPage = 1;
+    },
+    visible(val) {
+      if (!val) {
+        this.showRecycle = false;
+        this.searchText = '';
+        this.currentPage = 1;
+      }
     },
   },
 };
