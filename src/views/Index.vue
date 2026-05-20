@@ -95,6 +95,13 @@
           >
             <div class="cover-img">
               <img
+                v-if="!book.coverUrl"
+                :src="noCover"
+                class="cover"
+                alt=""
+              />
+              <img
+                v-else
                 class="cover"
                 v-lazy="getCover(book.coverUrl)"
                 :key="book.coverUrl"
@@ -140,6 +147,7 @@
 import "../assets/fonts/shelffont.css";
 import ajax from "../plugins/ajax";
 import BookManage from "../components/BookManage";
+import noCover from "../assets/imgs/noCover.jpeg";
 
 export default {
   components: { BookManage },
@@ -245,6 +253,9 @@ export default {
       return str;
     },
     getCover(coverUrl) {
+      if (!coverUrl || coverUrl === '') {
+        return noCover;
+      }
       return /^data:/.test(coverUrl)
         ? coverUrl
         : (process.env.NODE_ENV !== "production"

@@ -3,6 +3,6 @@ module.exports = {
   publicPath: "./",
   productionSourceMap: false,
   devServer: {
-    port: 8081
-  }
+    port: 8081,
+  },
 };

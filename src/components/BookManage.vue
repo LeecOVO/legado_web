@@ -153,7 +153,7 @@
             <div v-else-if="editForm.coverUrl" class="cover-preview cover-data">
               封面
             </div>
-            <div v-else class="cover-preview cover-empty">无封面</div>
+            <img v-else :src="noCover" class="cover-preview" />
             <el-upload
               action="#"
               accept="image/jpeg,image/png,image/gif,image/webp"
@@ -210,6 +210,7 @@
 
 <script>
 import ajax from "../plugins/ajax";
+import noCover from "../assets/imgs/noCover.jpeg";
 
 export default {
   name: "BookManage",
@@ -221,6 +222,7 @@ export default {
   },
   data() {
     return {
+      noCover,
       showRecycle: false,
       books: [],
       recycleBooks: [],
