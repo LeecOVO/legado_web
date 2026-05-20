@@ -36,81 +36,90 @@
         />
       </div>
 
-      <!-- Normal Book Table -->
-      <el-table
-        v-if="!showRecycle"
-        :data="pagedBooks"
-        size="small"
-        stripe
-        v-loading="loading"
-        style="width: 100%"
-      >
-        <el-table-column prop="name" label="书名" min-width="160" />
-        <el-table-column prop="author" label="作者" min-width="120">
-          <template slot-scope="scope">
-            {{ scope.row.author || '未知' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalChapterNum" label="章节" width="80" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.totalChapterNum || 0 }}章
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="150" align="center">
-          <template slot-scope="scope">
-            <el-button size="mini" type="primary" plain @click="openEdit(scope.row)">
-              编辑
-            </el-button>
-            <el-button size="mini" type="danger" plain @click="softDelete(scope.row)">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <!-- Recycle Bin Table -->
-      <el-table
-        v-else
-        :data="pagedRecycleBooks"
-        size="small"
-        stripe
-        v-loading="loading"
-        style="width: 100%"
-      >
-        <el-table-column prop="name" label="书名" min-width="160" />
-        <el-table-column prop="author" label="作者" min-width="120">
-          <template slot-scope="scope">
-            {{ scope.row.author || '未知' }}
-          </template>
-        </el-table-column>
-        <el-table-column label="删除时间" width="150">
-          <template slot-scope="scope">
-            {{ formatTime(scope.row.deletedAt) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="150" align="center">
-          <template slot-scope="scope">
-            <el-button size="mini" type="success" plain @click="restoreBook(scope.row)">
-              恢复
-            </el-button>
-            <el-button size="mini" type="danger" plain @click="permanentDelete(scope.row)">
-              彻底删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <!-- Pagination -->
-      <div class="pagination-wrapper">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="showRecycle ? filteredRecycleBooks.length : filteredBooks.length"
-          :page-size="pageSize"
-          :current-page.sync="currentPage"
-          small
-        />
-      </div>
+      <transition name="fade" mode="out-in">
+        <div v-if="!showRecycle" key="books">
+          <el-table
+            :data="pagedBooks"
+            size="small"
+            stripe
+            v-loading="loading"
+            style="width: 100%"
+          >
+            <el-table-column prop="name" label="书名" min-width="160" />
+            <el-table-column prop="author" label="作者" min-width="120">
+              <template slot-scope="scope">
+                {{ scope.row.author || '未知' }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="totalChapterNum" label="章节" width="80" align="center">
+              <template slot-scope="scope">
+                {{ scope.row.totalChapterNum || 0 }}章
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="150" align="center">
+              <template slot-scope="scope">
+                <el-button size="mini" type="primary" plain @click="openEdit(scope.row)">
+                  编辑
+                </el-button>
+                <el-button size="mini" type="danger" plain @click="softDelete(scope.row)">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pagination-wrapper" v-if="filteredBooks.length > pageSize">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :total="filteredBooks.length"
+              :page-size="pageSize"
+              :current-page.sync="currentPage"
+              small
+            />
+          </div>
+        </div>
+        <div v-else key="recycle">
+          <el-table
+            :data="pagedRecycleBooks"
+            size="small"
+            stripe
+            v-loading="loading"
+            style="width: 100%"
+          >
+            <el-table-column prop="name" label="书名" min-width="160" />
+            <el-table-column prop="author" label="作者" min-width="120">
+              <template slot-scope="scope">
+                {{ scope.row.author || '未知' }}
+              </template>
+            </el-table-column>
+            <el-table-column label="删除时间" width="150">
+              <template slot-scope="scope">
+                {{ formatTime(scope.row.deletedAt) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="150" align="center">
+              <template slot-scope="scope">
+                <el-button size="mini" type="success" plain @click="restoreBook(scope.row)">
+                  恢复
+                </el-button>
+                <el-button size="mini" type="danger" plain @click="permanentDelete(scope.row)">
+                  彻底删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pagination-wrapper" v-if="filteredRecycleBooks.length > pageSize">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :total="filteredRecycleBooks.length"
+              :page-size="pageSize"
+              :current-page.sync="currentPage"
+              small
+            />
+          </div>
+        </div>
+      </transition>
 
       <!-- Footer Toggle -->
       <div class="footer-toggle" @click="toggleRecycle">
@@ -567,5 +576,14 @@ export default {
 
 .upload-area {
   >>> .el-upload-dragger { width: 100%; }
+}
+</style>
+
+<style lang="stylus">
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>
