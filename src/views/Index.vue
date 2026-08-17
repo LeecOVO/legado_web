@@ -606,11 +606,24 @@ export default {
           dark: "linear-gradient(135deg, #15181e 0%, #242933 100%)",
           custom: this.bookshelfSettings.shelfBackgroundColor || "var(--bg)",
         };
-        return {
+        const style = {
           "--book-gap": this.bookshelfSettings.bookSpacing + "px",
-          background:
-            bgMap[this.bookshelfSettings.shelfBackground] || "var(--bg)",
         };
+        if (
+          this.bookshelfSettings.shelfBackground === "custom" &&
+          this.bookshelfSettings.shelfBackgroundImage
+        ) {
+          style.backgroundImage = `url("${this.bookshelfSettings.shelfBackgroundImage}")`;
+          style.backgroundSize = "cover";
+          style.backgroundPosition = "center center";
+          style.backgroundRepeat = "no-repeat";
+          style.backgroundColor =
+            this.bookshelfSettings.shelfBackgroundColor || "var(--bg)";
+        } else {
+          style.background =
+            bgMap[this.bookshelfSettings.shelfBackground] || "var(--bg)";
+        }
+        return style;
       },
     connectStatus() {
       return this.$store.state.connectStatus;
@@ -649,13 +662,7 @@ export default {
     flex-direction: column;
     position: relative;
 
-      @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-        background: var(--glass-bg);
-        backdrop-filter: blur(24px) saturate(180%);
-        -webkit-backdrop-filter: blur(24px) saturate(180%);
-        border-right: 1px solid var(--glass-border);
-        box-shadow: var(--glass-shadow);
-      }
+      /* 液态玻璃效果统一由 theme.css 控制，避免重复样式 */
 
     .navigation-header {
       display: flex;

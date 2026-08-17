@@ -30,6 +30,7 @@ export default new Vuex.Store({
         customCoverUrl: "",
         shelfBackground: "default",
         shelfBackgroundColor: "#f4f5f7",
+          shelfBackgroundImage: "",
       },
     miniInterface: false,
     readSettingsVisible: false,
@@ -95,6 +96,7 @@ export default new Vuex.Store({
             customCoverUrl: "",
             shelfBackground: "default",
             shelfBackgroundColor: "#f4f5f7",
+          shelfBackgroundImage: "",
           },
           settings || {}
         );

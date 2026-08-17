@@ -83,6 +83,13 @@
                 class="hidden-input"
                 @change="onCoverFileChange"
               />
+                <input
+                  ref="bgFile"
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  class="hidden-input"
+                  @change="onBgFileChange"
+                />
               <div class="setting-tip">
                 未设置封面的书籍将统一使用该默认封面；自定义封面会压缩后保存在本机浏览器。
               </div>
@@ -110,21 +117,48 @@
                 >
                   <span
                     class="bg-swatch"
-                    :style="{ background: bookshelfSettings.shelfBackgroundColor }"
+                    :style="customBgSwatchStyle"
                   >
+                      <img
+                        v-if="bookshelfSettings.shelfBackgroundImage"
+                        :src="bookshelfSettings.shelfBackgroundImage"
+                        class="bg-swatch-img"
+                        alt=""
+                      />
                     <input
-                      type="color"
+                      v-else
+                        type="color"
                       v-model="bookshelfSettings.shelfBackgroundColor"
                       class="color-input"
                       @click.stop
                       @input="selectShelfBackground('custom')"
                     />
                   </span>
-                  <span class="bg-name">自定义</span>
+                  <span class="bg-name">{{ bookshelfSettings.shelfBackgroundImage ? "自定义图" : "自定义" }}</span>
                 </div>
               </div>
+                <div
+                  class="bg-custom-actions"
+                  v-if="bookshelfSettings.shelfBackground === 'custom'"
+                >
+                  <el-button
+                    size="mini"
+                    icon="el-icon-upload2"
+                    @click="openBgFile"
+                  >
+                    {{ bookshelfSettings.shelfBackgroundImage ? "更换背景图" : "上传背景图" }}
+                  </el-button>
+                  <el-button
+                    v-if="bookshelfSettings.shelfBackgroundImage"
+                    size="mini"
+                    icon="el-icon-delete"
+                    @click="removeBgImage"
+                  >
+                    移除图片
+                  </el-button>
+                </div>
               <div class="setting-tip">
-                应用于整个页面背景；“默认”会跟随全局日间/夜间主题，其余背景固定显示。
+                应用于整个页面背景；“自定义”可上传背景图并自适应铺满，未上传图片时使用颜色。
               </div>
             </div>
 
@@ -227,6 +261,19 @@ export default {
     bookshelfSettings() {
       return this.$store.state.bookshelfSettings;
     },
+      customBgSwatchStyle() {
+        if (this.bookshelfSettings.shelfBackgroundImage) {
+          return {
+            backgroundImage: `url("${this.bookshelfSettings.shelfBackgroundImage}")`,
+            backgroundSize: "cover",
+            backgroundPosition: "center center",
+            backgroundRepeat: "no-repeat",
+          };
+        }
+        return {
+          background: this.bookshelfSettings.shelfBackgroundColor || "#f4f5f7",
+        };
+      },
   },
   methods: {
     onClosed() {
@@ -234,10 +281,14 @@ export default {
     },
     saveBookshelfSettings() {
       this.$store.commit("setBookshelfSettings", this.bookshelfSettings);
+        try {
       localStorage.setItem(
         "bookshelfSettings",
         JSON.stringify(this.$store.state.bookshelfSettings)
       );
+        } catch (e) {
+          this.$message.error("保存失败：背景图过大，请压缩后重试");
+        }
     },
     selectDefaultCover(type) {
       this.bookshelfSettings.defaultCover = type;
@@ -305,6 +356,64 @@ export default {
       this.bookshelfSettings.shelfBackground = key;
       this.saveBookshelfSettings();
     },
+      openBgFile() {
+        this.bookshelfSettings.shelfBackground = "custom";
+        this.saveBookshelfSettings();
+        this.$nextTick(() => {
+          if (this.$refs.bgFile) this.$refs.bgFile.click();
+        });
+      },
+      onBgFileChange(event) {
+        const file = event.target.files && event.target.files[0];
+        event.target.value = "";
+        if (!file) return;
+        if (!/^image\//.test(file.type)) {
+          this.$message.error("请选择图片文件");
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          this.$message.error("背景图不能超过 10MB");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const maxW = 1920;
+              const maxH = 1920;
+              const scale = Math.min(1, maxW / img.width, maxH / img.height);
+              const canvas = document.createElement("canvas");
+              canvas.width = Math.max(1, Math.round(img.width * scale));
+              canvas.height = Math.max(1, Math.round(img.height * scale));
+              const ctx = canvas.getContext("2d");
+              ctx.fillStyle =
+                this.bookshelfSettings.shelfBackgroundColor || "#f4f5f7";
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              this.bookshelfSettings.shelfBackgroundImage = canvas.toDataURL(
+                "image/jpeg",
+                0.82
+              );
+              this.bookshelfSettings.shelfBackground = "custom";
+              this.saveBookshelfSettings();
+              this.$message.success("背景图已更新");
+            } catch (err) {
+              this.$message.error("图片处理失败");
+            }
+          };
+          img.onerror = () => {
+            this.$message.error("图片读取失败");
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      },
+      removeBgImage() {
+        this.bookshelfSettings.shelfBackgroundImage = "";
+        this.saveBookshelfSettings();
+        this.$message.success("背景图已移除");
+      },
     resetBookshelfSettings() {
       this.$store.commit("setBookshelfSettings", {});
       localStorage.setItem(
@@ -581,6 +690,19 @@ export default {
   background: transparent;
   cursor: pointer;
   opacity: 0;
+}
+
+.bg-swatch-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bg-custom-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .setting-actions {

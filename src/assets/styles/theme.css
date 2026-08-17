@@ -30,6 +30,7 @@
     --glass-bg-strong: rgba(255, 255, 255, 0.74);
     --glass-border: rgba(255, 255, 255, 0.68);
     --glass-highlight: rgba(255, 255, 255, 0.9);
+    --glass-sheen: rgba(255, 255, 255, 0.38);
     --glass-shadow: 0 8px 32px rgba(17, 24, 39, 0.10);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -62,6 +63,7 @@ html[data-theme="dark"] {
     --glass-bg-strong: rgba(28, 33, 41, 0.74);
     --glass-border: rgba(255, 255, 255, 0.12);
     --glass-highlight: rgba(255, 255, 255, 0.16);
+    --glass-sheen: rgba(255, 255, 255, 0.10);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
@@ -341,32 +343,54 @@ html[data-theme="dark"] .el-color-picker__color {
 }
 
 /* ---------- iOS 26 液态玻璃导航 ---------- */
-html .index-wrapper .navigation-wrapper::before {
+#app .index-wrapper .navigation-wrapper {
+  position: relative;
+  background:
+    radial-gradient(
+      120% 90% at 12% 0%,
+      var(--glass-sheen) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      80% 55% at 98% 22%,
+      var(--glass-sheen) 0%,
+      transparent 48%
+    ),
+    linear-gradient(
+      165deg,
+      var(--glass-bg-strong) 0%,
+      var(--glass-bg) 45%,
+      var(--glass-bg) 100%
+    );
+  border-right: 1px solid var(--glass-border);
+  box-shadow:
+    inset -1px 0 0 var(--glass-border),
+    inset 0 0 32px var(--glass-sheen),
+    var(--glass-shadow);
+}
+
+#app .index-wrapper .navigation-wrapper::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--glass-highlight);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--glass-highlight) 12%,
+    var(--glass-highlight) 88%,
+    transparent 100%
+  );
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  html .index-wrapper .navigation-wrapper {
-    background: var(--glass-bg);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border-right: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-  }
-
-  @media screen and (max-width: 750px) {
-    html .index-wrapper .navigation-wrapper {
-      border-right: none;
-      border-bottom: 1px solid var(--glass-border);
-    }
+@media screen and (max-width: 750px) {
+  #app .index-wrapper .navigation-wrapper {
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border, var(--border));
   }
 }
 

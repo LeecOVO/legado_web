@@ -121,7 +121,7 @@
                   恢复
                 </el-button>
                 <el-button size="mini" type="danger" plain @click="permanentDelete(scope.row)">
-                  彻底删除
+                  删除
                 </el-button>
               </template>
             </el-table-column>
@@ -382,9 +382,9 @@ export default {
     },
     permanentDelete(book) {
       this.$confirm(
-        `确定要彻底删除《${book.name}》吗？此操作不可恢复！`,
-        "确认彻底删除",
-        { confirmButtonText: "彻底删除", cancelButtonText: "取消", type: "warning" }
+        `确定要删除《${book.name}》吗？此操作不可恢复！`,
+        "确认删除",
+        { confirmButtonText: "删除", cancelButtonText: "取消", type: "warning" }
       )
         .then(() => {
           ajax
@@ -393,7 +393,7 @@ export default {
             )
             .then((res) => {
               if (res.data.isSuccess) {
-                this.$message.success("已彻底删除");
+                this.$message.success("已删除");
                 this.fetchRecycleBooks();
               } else {
                 this.$message.error(res.data.errorMsg || "删除失败");

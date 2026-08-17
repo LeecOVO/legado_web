@@ -1760,4 +1760,22 @@ export default {
   user-select: text;
   cursor: text;
 }
+
+/* 移动端工具栏：目录/设置按钮外层是 el-popover 渲染出的无 class 根 <span>，
+   它没有参与等分（其它按钮 .tool-icon 都是 flex:1），导致这两个按钮挤在左侧。
+   这里用直接子代选择器精确命中该根 span 及其内部的 reference-wrapper，
+   让它们像其它选项一样均分整行宽度。 */
+@media screen and (max-width: 750px) {
+  .chapter-wrapper .tool-bar .tools > span {
+    flex: 1 1 0;
+    display: flex;
+    min-width: 0;
+  }
+
+  .chapter-wrapper .tool-bar .tools > span > .el-popover__reference-wrapper {
+    flex: 1 1 0;
+    display: flex;
+    min-width: 0;
+  }
+}
 </style>
