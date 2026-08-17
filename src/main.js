@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import "./plugins/element.js";
+import "./assets/styles/theme.css";
 import store from "./plugins/vuex.js";
 import "./plugins/md5.js";
 import ajax from "./plugins/ajax";
@@ -10,6 +11,25 @@ import VueLazyload from "vue-lazyload";
 import { getImageFromLegado } from "./plugins/utils";
 
 Vue.config.productionTip = false;
+
+/**
+ * 全局异常兜底：
+ * - Vue 渲染/生命周期异常统一记录，避免页面卡死或加载态无法关闭；
+ * - 未处理的 Promise 异常统一记录，避免静默失败。
+ */
+Vue.config.errorHandler = function (err, vm, info) {
+  console.error("[Vue error]", info, err);
+  if (vm && vm.$message) {
+    try {
+      vm.$message.error("页面出现异常，请刷新后重试");
+    } catch (e) {
+      // 忽略错误提示自身的异常
+    }
+  }
+};
+window.addEventListener("unhandledrejection", function (event) {
+  console.error("[Unhandled promise rejection]", event.reason);
+});
 new Vue({
   router,
   store,
@@ -53,4 +73,24 @@ ajax.get("/getReadConfig").then((res) => {
     config = Object.assign(defaultConfig, config);
     vuex.commit("setConfig", config);
   }
+
+/**
+ * 加载书架设置
+ */
+try {
+  const savedBookshelfSettings = localStorage.getItem("bookshelfSettings");
+  if (savedBookshelfSettings) {
+    store.commit("setBookshelfSettings", JSON.parse(savedBookshelfSettings));
+  }
+} catch (e) {}
 });
+
+/**
+ * 加载书架设置（本地持久化）
+ */
+try {
+  const savedBookshelfSettings = localStorage.getItem("bookshelfSettings");
+  if (savedBookshelfSettings) {
+    store.commit("setBookshelfSettings", JSON.parse(savedBookshelfSettings));
+  }
+} catch (e) {}

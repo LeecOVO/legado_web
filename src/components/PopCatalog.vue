@@ -32,7 +32,7 @@ export default {
   name: "PopCata",
   data() {
     return {
-      isNight: this.$store.state.config.theme == 6,
+      isNight: this.$store.state.config.theme >= 6,
       index: this.$store.state.readingBook.index,
     };
   },
@@ -48,14 +48,14 @@ export default {
     },
     popupTheme() {
       return {
-        background: config.themes[this.theme].popup,
+        background: (config.themes[this.theme] || {}).popup,
       };
     },
   },
   mounted() {},
   watch: {
     theme(theme) {
-      if (theme == 6) {
+      if (theme >= 6) {
         this.isNight = true;
       } else {
         this.isNight = false;
@@ -63,9 +63,11 @@ export default {
     },
     popCataVisible() {
       this.$nextTick(function () {
-        let index = this.$store.state.readingBook.index;
+        let index = this.$store.state.readingBook.index || 0;
         let wrapper = this.$refs.cataData;
-        jump(this.$refs.cata[index], { container: wrapper, duration: 0 });
+          let target = this.$refs.cata && this.$refs.cata[index];
+          if (!target || !wrapper) return;
+        jump(target, { container: wrapper, duration: 0 });
       });
     },
   },
@@ -104,24 +106,20 @@ export default {
     overflow: auto;
 
     .cata {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 16px;
 
       .selected {
         color: #EB4259;
       }
 
       .log {
-        width: 50%;
         height: 40px;
         cursor: pointer;
-        float: left;
         font: 16px / 40px PingFangSC-Regular, HelveticaNeue-Light, 'Helvetica Neue Light', 'Microsoft YaHei', sans-serif;
 
         .log-text {
-          margin-right: 26px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -133,6 +131,7 @@ export default {
   .night {
     >>>.log {
       border-bottom: 1px solid #666;
+      color: #b0b5bf;
     }
   }
 
@@ -144,8 +143,58 @@ export default {
 }
 
 @media screen and (max-width: 500px) {
-  .cata-wrapper .data-wrapper .cata .log {
-  width: 100%;
+  .cata-wrapper .data-wrapper .cata {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- 弹层自适应：目录 ---------- */
+.cata-wrapper {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 180px);
+  padding: 18px 20px 24px;
+}
+
+.cata-wrapper .title {
+  flex: none;
+  margin-bottom: 14px;
+}
+
+.cata-wrapper .data-wrapper {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 220px;
+  max-height: 50vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cata-wrapper .data-wrapper .cata {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  column-gap: 14px;
+}
+
+@media screen and (max-width: 750px) {
+  .cata-wrapper {
+    padding: 14px 14px 18px;
+    max-height: calc(100vh - 150px);
+  }
+
+  .cata-wrapper .data-wrapper {
+    min-height: 160px;
+    max-height: 48vh;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .cata-wrapper .data-wrapper .cata {
+    grid-template-columns: 1fr;
+  }
+
+  .cata-wrapper .data-wrapper {
+    max-height: 45vh;
   }
 }
 </style>

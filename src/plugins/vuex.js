@@ -21,9 +21,19 @@ export default new Vuex.Store({
       fontSize: 18,
       readWidth: 800,
       infiniteLoading: false,
+      fontColor: "",
+      pageTurnMode: "slide",
     },
+      bookshelfSettings: {
+        bookSpacing: 18,
+        defaultCover: "builtin",
+        customCoverUrl: "",
+        shelfBackground: "default",
+        shelfBackgroundColor: "#f4f5f7",
+      },
     miniInterface: false,
     readSettingsVisible: false,
+    uiDarkMode: false,
   },
   mutations: {
     setConnectStatus(state, connectStatus) {
@@ -51,7 +61,19 @@ export default new Vuex.Store({
       state.readingBook = readingBook;
     },
     setConfig(state, config) {
-      state.config = config;
+      // 合并默认配置，确保 fontColor / pageTurnMode 等新增字段始终存在且可响应
+      state.config = Object.assign(
+        {
+          theme: 0,
+          font: 0,
+          fontSize: 18,
+          readWidth: 800,
+          infiniteLoading: false,
+          fontColor: "",
+          pageTurnMode: "slide",
+        },
+        config || {}
+      );
     },
     setReadSettingsVisible(state, visible) {
       state.readSettingsVisible = visible;
@@ -62,6 +84,21 @@ export default new Vuex.Store({
     setMiniInterface(state, mini) {
       state.miniInterface = mini;
     },
+    setUiDarkMode(state, dark) {
+      state.uiDarkMode = dark;
+    },
+      setBookshelfSettings(state, settings) {
+        state.bookshelfSettings = Object.assign(
+          {
+            bookSpacing: 18,
+            defaultCover: "builtin",
+            customCoverUrl: "",
+            shelfBackground: "default",
+            shelfBackgroundColor: "#f4f5f7",
+          },
+          settings || {}
+        );
+      },
     clearReadingBook(state) {
       state.catalog = [];
       state.readingBook = {};

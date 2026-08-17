@@ -1,0 +1,9 @@
+{
+  "name": "Legado Web 书架",
+  "short_name": "阅读",
+  "description": "轻量、干净的网页阅读器，支持 Legado 后端书籍管理与多书源在线阅读。",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f4f5f7",
+  "theme_color": "#f4f5f7"
+}
