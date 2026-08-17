@@ -1,12 +1,10 @@
 vue3版本 https://github.com/gedoor/legado/tree/master/modules/web
 ***
-# 「阅读3.0」 web 端（已打包进阅读3.0，不能设置IP）
+# 基于「阅读3.0」 web 端修改
 
 > 项目仓库：https://github.com/LeecOVO/legado_web
 
-本程序为「阅读3.0」的配套 web 端，需要保证手机和电脑在同一局域网内，然后手机端打开 web 服务。
-
-~~在线地址 http://alanskycn.gitee.io/vip/reader/~~
+本程序为 back_legado_web 的配套 web 端，需要连接后端或统一打包使用。
 
 ## 具体实现
 
@@ -46,7 +44,10 @@ yarn lint
 
 ## 预览
 
-![](imgs/1.jpg)
-![](imgs/2.jpg)
-![](imgs/3.jpg)
-![](imgs/4.jpg)
+![](imgs/1.png)
+![](imgs/2.png)
+![](imgs/3.png)
+![](imgs/4.png)
+![](imgs/5.png)
+![](imgs/6.png) ![](imgs/7.png)
+
