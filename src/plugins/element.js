@@ -18,6 +18,9 @@ import {
   Pagination,
   Form,
   FormItem,
+  Tabs,
+  TabPane,
+  Progress,
 } from "element-ui";
 
 Vue.use(Button);
@@ -36,6 +39,9 @@ Vue.use(Upload);
 Vue.use(Pagination);
 Vue.use(Form);
 Vue.use(FormItem);
+Vue.use(Tabs);
+Vue.use(TabPane);
+Vue.use(Progress);
 
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$message = Message;

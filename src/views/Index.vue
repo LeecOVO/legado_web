@@ -64,6 +64,17 @@
         </div>
 
         <div class="nav-section">
+          <div class="section-title">在线书库</div>
+          <el-tag
+            type="info"
+            class="setting-manage"
+            @click="showOnlineStore = true"
+          >
+            搜索下载小说
+          </el-tag>
+        </div>
+
+        <div class="nav-section">
           <div class="section-title">书籍管理</div>
           <el-tag
             type="info"
@@ -203,6 +214,11 @@
       @close="fetchBookShelfData"
       @saved="fetchBookShelfData"
     />
+    <OnlineStore
+      :visible.sync="showOnlineStore"
+      @downloaded="fetchBookShelfData"
+      @read="readOnlineBook"
+    />
       <SystemSettings :visible.sync="showSystemSettings" />
   </div>
 </template>
@@ -212,14 +228,16 @@ import "../assets/fonts/shelffont.css";
 import ajax from "../plugins/ajax";
 import BookManage from "../components/BookManage";
 import SystemSettings from "../components/SystemSettings";
+import OnlineStore from "../components/OnlineStore";
 import noCover from "../assets/imgs/noCover.jpeg";
 
 export default {
-  components: { BookManage, SystemSettings },
+  components: { BookManage, SystemSettings, OnlineStore },
   data() {
     return {
       search: "",
       showBookManage: false,
+      showOnlineStore: false,
         showSystemSettings: false,
       longPressTimer: null,
       longPressFired: false,
@@ -441,6 +459,15 @@ export default {
       if (this.$refs.bookManage && book && book.bookUrl) {
         this.$refs.bookManage.openEdit(book);
       }
+    },
+    // 在线书库下载完成后，点击「阅读」直接进入阅读页
+    readOnlineBook({ bookUrl, bookName, bookAuthor }) {
+      if (!bookUrl || !bookName) {
+        this.$message.warning("书籍信息不完整，无法阅读");
+        return;
+      }
+      this.showOnlineStore = false;
+      this.toDetail(bookUrl, bookName, bookAuthor, 1, 0);
     },
     dateFormat(t) {
       let time = new Date().getTime();
